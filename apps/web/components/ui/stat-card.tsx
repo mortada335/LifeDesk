@@ -21,34 +21,40 @@ export function StatCard({
 }: StatCardProps) {
   const colorMap = {
     red: {
-      bg: 'bg-rose-50/70 border-rose-100 hover:border-rose-300',
-      iconBg: 'bg-rose-500/10 text-rose-600',
-      value: 'text-rose-700',
+      card: 'bg-gradient-to-br from-white via-rose-50/30 to-rose-100/40 border-rose-200/80 hover:border-rose-300 hover:shadow-rose-500/10',
+      iconBox: 'bg-rose-500 text-white shadow-rose-500/20 shadow-md',
+      value: 'text-rose-950',
+      accent: 'bg-rose-500',
     },
     amber: {
-      bg: 'bg-amber-50/70 border-amber-100 hover:border-amber-300',
-      iconBg: 'bg-amber-500/10 text-amber-600',
-      value: 'text-amber-700',
+      card: 'bg-gradient-to-br from-white via-amber-50/30 to-amber-100/40 border-amber-200/80 hover:border-amber-300 hover:shadow-amber-500/10',
+      iconBox: 'bg-amber-500 text-white shadow-amber-500/20 shadow-md',
+      value: 'text-amber-950',
+      accent: 'bg-amber-500',
     },
     blue: {
-      bg: 'bg-blue-50/70 border-blue-100 hover:border-blue-300',
-      iconBg: 'bg-blue-500/10 text-blue-600',
-      value: 'text-blue-700',
+      card: 'bg-gradient-to-br from-white via-sky-50/30 to-sky-100/40 border-sky-200/80 hover:border-sky-300 hover:shadow-sky-500/10',
+      iconBox: 'bg-sky-500 text-white shadow-sky-500/20 shadow-md',
+      value: 'text-sky-950',
+      accent: 'bg-sky-500',
     },
     emerald: {
-      bg: 'bg-emerald-50/70 border-emerald-100 hover:border-emerald-300',
-      iconBg: 'bg-emerald-500/10 text-emerald-600',
-      value: 'text-emerald-700',
+      card: 'bg-gradient-to-br from-white via-emerald-50/30 to-emerald-100/40 border-emerald-200/80 hover:border-emerald-300 hover:shadow-emerald-500/10',
+      iconBox: 'bg-emerald-500 text-white shadow-emerald-500/20 shadow-md',
+      value: 'text-emerald-950',
+      accent: 'bg-emerald-500',
     },
     indigo: {
-      bg: 'bg-indigo-50/70 border-indigo-100 hover:border-indigo-300',
-      iconBg: 'bg-indigo-500/10 text-indigo-600',
-      value: 'text-indigo-700',
+      card: 'bg-gradient-to-br from-white via-indigo-50/30 to-indigo-100/40 border-indigo-200/80 hover:border-indigo-300 hover:shadow-indigo-500/10',
+      iconBox: 'bg-indigo-600 text-white shadow-indigo-500/20 shadow-md',
+      value: 'text-indigo-950',
+      accent: 'bg-indigo-600',
     },
     slate: {
-      bg: 'bg-white border-slate-200 hover:border-slate-300',
-      iconBg: 'bg-slate-100 text-slate-700',
+      card: 'bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-slate-500/10',
+      iconBox: 'bg-slate-800 text-white shadow-slate-500/20 shadow-md',
       value: 'text-slate-900',
+      accent: 'bg-slate-600',
     },
   };
 
@@ -58,18 +64,32 @@ export function StatCard({
     <div
       onClick={onClick}
       className={clsx(
-        'p-5 rounded-2xl border transition-all duration-150 shadow-xs relative overflow-hidden',
-        scheme.bg,
-        onClick && 'cursor-pointer hover:shadow-md hover:-translate-y-0.5',
+        'group p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden backdrop-blur-sm shadow-xs',
+        scheme.card,
+        onClick && 'cursor-pointer hover:-translate-y-1 hover:shadow-lg',
       )}
     >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</p>
-          <p className={clsx('text-2xl font-bold tracking-tight mt-1.5', scheme.value)}>{value}</p>
-          {subtitle && <p className="text-xs text-slate-500 mt-1">{subtitle}</p>}
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <span className={clsx('w-1.5 h-1.5 rounded-full shrink-0', scheme.accent)} />
+            {title}
+          </p>
+          <p className={clsx('text-2xl sm:text-3xl font-extrabold tracking-tight font-mono', scheme.value)}>
+            {value}
+          </p>
+          {subtitle && (
+            <p className="text-xs text-slate-500 font-medium pt-0.5 line-clamp-1">
+              {subtitle}
+            </p>
+          )}
         </div>
-        <div className={clsx('p-3 rounded-xl flex items-center justify-center shadow-xs', scheme.iconBg)}>
+        <div
+          className={clsx(
+            'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110',
+            scheme.iconBox,
+          )}
+        >
           <Icon className="w-5 h-5" />
         </div>
       </div>

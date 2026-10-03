@@ -23,6 +23,11 @@ const DEFAULT_CATEGORIES = [
   { name: 'Other', color: '#6b7280', icon: 'tag' },
 ];
 
+/** Hash a plaintext reset token so we never store raw tokens in the DB */
+function hashResetToken(token: string): string {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -71,7 +76,7 @@ export class AuthService {
         title: 'Welcome to LifeDesk! 🌟',
         message:
           'Your personal life-obligations hub is ready. Start by adding your first bill, document, or subscription.',
-        type: 'DUE_TODAY',
+        type: 'SYSTEM',
       },
     });
 
@@ -163,24 +168,28 @@ export class AuthService {
       };
     }
 
-    const resetToken = crypto.randomBytes(24).toString('hex');
+    // Generate a secure raw token — only returned in the API response (dev) or sent via email (prod)
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = hashResetToken(rawToken);
     const expiry = new Date(Date.now() + 3600 * 1000); // 1 hour
 
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
-        resetToken,
+        // Store ONLY the hash — the raw token never touches the DB
+        resetToken: tokenHash,
         resetTokenExpiry: expiry,
       },
     });
 
-    // In-app notification for reset
+    // Notify user a reset was requested — NEVER embed the token in a notification
     await this.prisma.inAppNotification.create({
       data: {
         userId: user.id,
         title: 'Password Reset Requested 🔑',
-        message: `Your password reset code is: ${resetToken}`,
-        type: 'DUE_TODAY',
+        message:
+          'A password reset was requested for your account. If this was not you, please secure your account immediately.',
+        type: 'SYSTEM',
       },
     });
 
@@ -188,7 +197,8 @@ export class AuthService {
 
     return {
       message: 'If an account exists with that email, a password reset token has been issued.',
-      ...(isDev ? { resetToken } : {}),
+      // Only expose raw token in dev so the flow can be tested without email infrastructure
+      ...(isDev ? { resetToken: rawToken } : {}),
     };
   }
 
@@ -197,9 +207,12 @@ export class AuthService {
       throw new BadRequestException('Invalid token or password too short');
     }
 
+    // Hash the incoming token before comparing with the stored hash
+    const tokenHash = hashResetToken(token);
+
     const user = await this.prisma.user.findFirst({
       where: {
-        resetToken: token,
+        resetToken: tokenHash,
         resetTokenExpiry: { gt: new Date() },
       },
     });

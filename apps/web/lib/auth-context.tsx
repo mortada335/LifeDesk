@@ -1,7 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { UserProfile } from '@lifedesk/types';
 import { apiClient } from './api-client';
 
@@ -22,7 +22,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const pathname = usePathname();
+
+  // Keep a ref so apiClient can always read the latest token without
+  // being re-created on every render (avoids the stale-closure issue).
+  const tokenRef = useRef<string | null>(null);
+
+  /** Persist token to both state and localStorage in one call */
+  const persistToken = (newToken: string | null) => {
+    tokenRef.current = newToken;
+    setToken(newToken);
+    if (newToken) {
+      localStorage.setItem('lifedesk_token', newToken);
+    } else {
+      localStorage.removeItem('lifedesk_token');
+    }
+  };
+
+  /** Clear all session state and go to login */
+  const clearSession = () => {
+    persistToken(null);
+    setUser(null);
+    router.push('/login');
+  };
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      clearSession();
+    };
+    window.addEventListener('lifedesk:unauthorized', handleUnauthorized);
+    return () => {
+      window.removeEventListener('lifedesk:unauthorized', handleUnauthorized);
+    };
+  }, []);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('lifedesk_token');
@@ -31,15 +62,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Hydrate token ref immediately so apiClient can use it for /auth/me
+    tokenRef.current = savedToken;
     setToken(savedToken);
-    apiClient<UserProfile>('/auth/me')
+
+    apiClient<UserProfile>('/auth/me', {}, tokenRef)
       .then((userData) => {
         setUser(userData);
       })
-      .catch(() => {
-        localStorage.removeItem('lifedesk_token');
-        setToken(null);
-        setUser(null);
+      .catch((err) => {
+        // If token is expired/invalid, clear session silently
+        if (err?.status === 401) {
+          persistToken(null);
+          setUser(null);
+        }
       })
       .finally(() => {
         setIsLoading(false);
@@ -47,34 +83,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const data = await apiClient<{ accessToken: string; user: UserProfile }>('/auth/login', {
-      method: 'POST',
-      body: { email, password },
-    });
-
-    localStorage.setItem('lifedesk_token', data.accessToken);
-    setToken(data.accessToken);
+    const data = await apiClient<{ accessToken: string; user: UserProfile }>(
+      '/auth/login',
+      { method: 'POST', body: { email, password } },
+    );
+    persistToken(data.accessToken);
     setUser(data.user);
     router.push('/dashboard');
   };
 
   const register = async (name: string, email: string, password: string) => {
-    const data = await apiClient<{ accessToken: string; user: UserProfile }>('/auth/register', {
-      method: 'POST',
-      body: { name, email, password },
-    });
-
-    localStorage.setItem('lifedesk_token', data.accessToken);
-    setToken(data.accessToken);
+    const data = await apiClient<{ accessToken: string; user: UserProfile }>(
+      '/auth/register',
+      { method: 'POST', body: { name, email, password } },
+    );
+    persistToken(data.accessToken);
     setUser(data.user);
     router.push('/dashboard');
   };
 
   const logout = () => {
-    localStorage.removeItem('lifedesk_token');
-    setToken(null);
-    setUser(null);
-    router.push('/login');
+    clearSession();
   };
 
   const updateUser = (updatedData: Partial<UserProfile>) => {

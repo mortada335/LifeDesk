@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -9,11 +10,13 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Post('login')
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
@@ -25,11 +28,13 @@ export class AuthController {
     return this.authService.getMe(userId);
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Post('forgot-password')
   forgotPassword(@Body('email') email: string) {
     return this.authService.forgotPassword(email);
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Post('reset-password')
   resetPassword(
     @Body('token') token: string,
@@ -47,6 +52,7 @@ export class AuthController {
     return this.authService.updateProfile(userId, data);
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @UseGuards(JwtAuthGuard)
   @Post('change-password')
   changePassword(

@@ -50,26 +50,31 @@ export function Modal({
         onClick={(e) => {
           if (e.target === overlayRef.current) onClose();
         }}
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity flex items-center justify-center p-4"
+        className="fixed inset-0 bg-slate-950/40 backdrop-blur-md transition-opacity flex items-center justify-center p-4 sm:p-6"
       >
         <div
           role="dialog"
           aria-modal="true"
-          className={`relative w-full ${widthClasses[maxWidth]} bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all animate-in fade-in zoom-in-95 duration-150`}
+          className={`relative w-full ${widthClasses[maxWidth]} bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden transform transition-all animate-in fade-in zoom-in-95 duration-200`}
         >
           {/* Header */}
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div className="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <div>
-              <h3 className="text-base font-semibold text-slate-900">{title}</h3>
+              <h3 className="text-base font-bold text-slate-900 tracking-tight">{title}</h3>
               {description && <p className="text-xs text-slate-500 mt-0.5">{description}</p>}
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="hidden sm:inline-block text-[10px] font-mono text-slate-400 bg-slate-200/60 px-1.5 py-0.5 rounded">
+                ESC
+              </span>
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-xl p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Body */}

@@ -5,14 +5,16 @@ import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { apiClient } from '@/lib/api-client';
-import { User, Lock, CheckCircle2, Globe, Bell, Send, AlertCircle } from 'lucide-react';
+import { User, Lock, CheckCircle2, Globe, Bell, Send, AlertCircle, Shield, LogOut } from 'lucide-react';
 import { usePushNotifications } from '@/lib/push-notifications';
 import { useTranslation } from 'react-i18next';
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation();
   const { user, logout, updateUser } = useAuth();
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
   // Profile form state
   const [name, setName] = useState(user?.name || '');
@@ -20,6 +22,7 @@ export default function SettingsPage() {
   const [startOfWeek, setStartOfWeek] = useState(user?.startOfWeek || 'monday');
   const [dateFormat, setDateFormat] = useState(user?.dateFormat || 'MM/DD/YYYY');
   const [profileMsg, setProfileMsg] = useState<string | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
 
   // Password form state
@@ -37,6 +40,7 @@ export default function SettingsPage() {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setProfileMsg(null);
+    setProfileError(null);
     setProfileLoading(true);
 
     try {
@@ -47,7 +51,7 @@ export default function SettingsPage() {
       updateUser(updated);
       setProfileMsg(t('settings.profileSuccess'));
     } catch (err: any) {
-      setProfileMsg(err.message || t('common.error'));
+      setProfileError(err.message || t('common.error'));
     } finally {
       setProfileLoading(false);
     }
@@ -80,23 +84,35 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-4xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t('settings.title')}</h1>
+      {/* Header */}
+      <div className="pb-2 border-b border-slate-200/60">
+        <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
+          <span className="w-2 h-2 rounded-full bg-indigo-500" />
+          <span>{t('settings.title')}</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+          {t('settings.title')}
+        </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
           {t('settings.subtitle')}
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs divide-y divide-slate-100 overflow-hidden">
-        {/* Profile & Preferences Form */}
-        <form onSubmit={handleUpdateProfile} className="p-6 space-y-5">
+      <div className="glass-card rounded-3xl divide-y divide-slate-100 overflow-hidden shadow-xs">
+        {/* Profile & Regional Preferences Form */}
+        <form onSubmit={handleUpdateProfile} className="p-6 sm:p-8 space-y-5">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <User className="w-4 h-4 text-indigo-600" /> {t('settings.profileSection')}
             </h2>
             {profileMsg && (
-              <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> {profileMsg}
+              <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1.5 animate-in fade-in">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> {profileMsg}
+              </span>
+            )}
+            {profileError && (
+              <span className="text-xs text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1.5 animate-in fade-in">
+                <AlertCircle className="w-3.5 h-3.5 text-rose-600" /> {profileError}
               </span>
             )}
           </div>
@@ -117,7 +133,7 @@ export default function SettingsPage() {
                 type="text"
                 disabled
                 value={user.email}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-400 text-sm cursor-not-allowed"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/70 text-slate-400 text-sm font-medium cursor-not-allowed"
               />
             </div>
 
@@ -125,7 +141,7 @@ export default function SettingsPage() {
               label={t('settings.languageLabel')}
               value={i18n.language === 'ar' ? 'ar' : 'en'}
               options={[
-                { label: 'English', value: 'en' },
+                { label: 'English (US)', value: 'en' },
                 { label: 'العربية (Arabic)', value: 'ar' },
               ]}
               onChange={(e) => handleLanguageChange(e.target.value)}
@@ -177,30 +193,37 @@ export default function SettingsPage() {
                 type="text"
                 disabled
                 value={t('settings.currencyFixedValue')}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-sm font-semibold cursor-not-allowed"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/70 text-slate-700 text-sm font-bold font-mono cursor-not-allowed"
               />
             </div>
           </div>
 
           <div className="flex justify-end pt-2">
-            <Button type="submit" size="sm" isLoading={profileLoading}>
+            <Button
+              type="submit"
+              isLoading={profileLoading}
+            >
               {t('settings.saveChangesBtn')}
             </Button>
           </div>
         </form>
 
         {/* Change Password Form */}
-        <form onSubmit={handleChangePassword} className="p-6 space-y-4">
+        <form onSubmit={handleChangePassword} className="p-6 sm:p-8 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <Lock className="w-4 h-4 text-indigo-600" /> {t('settings.changePasswordSection')}
             </h2>
             {passMsg && (
-              <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> {passMsg}
+              <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1.5 animate-in fade-in">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> {passMsg}
               </span>
             )}
-            {passError && <span className="text-xs text-rose-600 font-semibold">{passError}</span>}
+            {passError && (
+              <span className="text-xs text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-full font-semibold animate-in fade-in">
+                {passError}
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -224,14 +247,18 @@ export default function SettingsPage() {
           </div>
 
           <div className="flex justify-end pt-2">
-            <Button type="submit" size="sm" variant="outline" isLoading={passLoading}>
+            <Button
+              type="submit"
+              variant="secondary"
+              isLoading={passLoading}
+            >
               {t('settings.updatePasswordBtn')}
             </Button>
           </div>
         </form>
 
         {/* Browser Push Notifications */}
-        <div className="p-6 space-y-4">
+        <div className="p-6 sm:p-8 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="space-y-1">
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
@@ -248,51 +275,68 @@ export default function SettingsPage() {
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     <CheckCircle2 className="w-3.5 h-3.5" /> {t('settings.pushStatusEnabled')}
                   </span>
-                  <Button
+                  <button
                     type="button"
-                    size="sm"
-                    variant="outline"
                     onClick={() =>
                       sendTestNotification(
                         t('settings.testPushTitle'),
                         t('settings.testPushBody'),
                       )
                     }
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-all cursor-pointer shadow-xs"
                   >
-                    <Send className="w-3.5 h-3.5 me-1.5 shrink-0" /> {t('settings.sendTestPushBtn')}
-                  </Button>
+                    <Send className="w-3 h-3 text-indigo-600 shrink-0" />
+                    <span>{t('settings.sendTestPushBtn')}</span>
+                  </button>
                 </>
               ) : permission === 'denied' ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 max-w-xs text-start">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" /> {t('settings.pushStatusDenied')}
                 </span>
               ) : (
-                <Button
+                <button
                   type="button"
-                  size="sm"
                   onClick={async () => {
                     await requestPermission();
                   }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 shadow-sm shadow-indigo-500/20 transition-all cursor-pointer"
                 >
-                  <Bell className="w-3.5 h-3.5 me-1.5 shrink-0" /> {t('settings.enablePushBtn')}
-                </Button>
+                  <Bell className="w-3.5 h-3.5 shrink-0" />
+                  <span>{t('settings.enablePushBtn')}</span>
+                </button>
               )}
             </div>
           </div>
         </div>
 
         {/* Session & Security */}
-        <div className="p-6 flex items-center justify-between">
+        <div className="p-6 sm:p-8 flex items-center justify-between bg-slate-50/40">
           <div>
             <h3 className="text-xs font-bold text-slate-900">{t('settings.signOutSection')}</h3>
             <p className="text-xs text-slate-500 mt-0.5">{t('settings.signOutDesc')}</p>
           </div>
 
-          <Button variant="danger" size="sm" onClick={logout}>
+          <Button
+            type="button"
+            variant="danger"
+            onClick={() => setIsLogoutDialogOpen(true)}
+          >
+            <LogOut className="w-3.5 h-3.5 me-1.5 shrink-0" />
             {t('settings.logOutBtn')}
           </Button>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={isLogoutDialogOpen}
+        onClose={() => setIsLogoutDialogOpen(false)}
+        onConfirm={logout}
+        title={t('settings.signOutSection')}
+        message={t('settings.signOutDesc')}
+        confirmText={t('settings.logOutBtn')}
+        cancelText={t('common.cancel')}
+        variant="danger"
+      />
     </div>
   );
 }

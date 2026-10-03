@@ -16,12 +16,17 @@ import {
   Sparkles,
   Menu,
   X,
+  Search,
+  Zap,
 } from 'lucide-react';
 import { NotificationBell } from '@/components/ui/notification-bell';
 import { CreateItemModal } from '@/components/items/create-item-modal';
+import { ItemDetailsModal } from '@/components/items/item-details-modal';
+import { CommandPalette } from '@/components/ui/command-palette';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import { useTranslation } from 'react-i18next';
+import { LifeItemDto } from '@lifedesk/types';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
@@ -29,7 +34,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const router = useRouter();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [selectedItemForDetails, setSelectedItemForDetails] = useState<LifeItemDto | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   React.useEffect(() => {
     if (!isLoading && !user) {
@@ -42,7 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-medium text-slate-500">Loading LifeDesk...</p>
+          <p className="text-sm font-semibold text-slate-600">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -50,78 +68,126 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (!user) return null;
 
-  const navigation = [
-    { name: t('nav.overview'), href: '/dashboard', icon: LayoutDashboard },
-    { name: t('nav.allCommitments'), href: '/dashboard/items', icon: CheckSquare },
-    { name: t('nav.calendar'), href: '/dashboard/calendar', icon: Calendar },
-    { name: t('nav.categories'), href: '/dashboard/categories', icon: FolderKanban },
-    { name: t('nav.activityLog'), href: '/dashboard/activity', icon: History },
-    { name: t('nav.settings'), href: '/dashboard/settings', icon: Settings },
+  const navGroups = [
+    {
+      label: t('nav.groupWorkspace'),
+      items: [
+        { name: t('nav.overview'), href: '/dashboard', icon: LayoutDashboard },
+        { name: t('nav.allCommitments'), href: '/dashboard/items', icon: CheckSquare },
+        { name: t('nav.calendar'), href: '/dashboard/calendar', icon: Calendar },
+      ],
+    },
+    {
+      label: t('nav.groupOrganization'),
+      items: [
+        { name: t('nav.categories'), href: '/dashboard/categories', icon: FolderKanban },
+        { name: t('nav.activityLog'), href: '/dashboard/activity', icon: History },
+      ],
+    },
+    {
+      label: t('nav.groupSystem'),
+      items: [
+        { name: t('nav.settings'), href: '/dashboard/settings', icon: Settings },
+      ],
+    },
   ];
 
   return (
-    <div className="h-screen flex bg-slate-50 overflow-hidden">
+    <div className="h-screen flex bg-slate-50/70 overflow-hidden text-slate-900">
       {/* Sidebar Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-e border-slate-200/80 p-5 shrink-0 justify-between h-full overflow-y-auto">
-        <div>
-          {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2.5 px-2 py-1 mb-6">
-            <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-indigo-200 shadow-md">
-              L
-            </div>
-            <div>
-              <span className="font-bold text-slate-900 tracking-tight text-base">LifeDesk</span>
-              <span className="text-[10px] block text-indigo-600 font-semibold uppercase tracking-wider">{t('common.subTagline')}</span>
-            </div>
-          </Link>
+      <aside className="hidden md:flex flex-col w-72 bg-white/90 backdrop-blur-xl border-e border-slate-200/80 p-5 shrink-0 justify-between h-full overflow-y-auto z-20">
+        <div className="space-y-6">
+          {/* Logo & Workspace Tag */}
+          <div className="flex items-center justify-between px-1">
+            <Link href="/dashboard" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center font-extrabold text-xl shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
+                L
+              </div>
+              <div>
+                <span className="font-extrabold text-slate-900 tracking-tight text-base flex items-center gap-1.5">
+                  LifeDesk
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">PRO</span>
+                </span>
+                <span className="text-[10px] block text-slate-400 font-medium tracking-wide">
+                  {t('common.subTagline')}
+                </span>
+              </div>
+            </Link>
+          </div>
 
-          {/* Quick Add Button */}
+          {/* Quick Add CTA */}
           <Button
             type="button"
-            className="w-full mb-6 py-2.5 font-medium shadow-indigo-100"
+            variant="gradient"
+            size="md"
             onClick={() => setIsCreateOpen(true)}
+            className="w-full justify-between"
           >
-            <Plus className="w-4 h-4 me-1.5 shrink-0" /> {t('nav.addCommitment')}
+            <div className="flex items-center gap-2">
+              <Plus className="w-4 h-4 shrink-0" />
+              <span>{t('nav.addCommitment')}</span>
+            </div>
+            <kbd className="hidden lg:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-white/20 rounded text-white/90">
+              +
+            </kbd>
           </Button>
 
-          {/* Nav Items */}
-          <nav className="space-y-1">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href;
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-700'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
-                  <span>{item.name}</span>
-                </Link>
-              );
-            })}
-          </nav>
+          {/* Nav Items Grouped */}
+          <div className="space-y-5">
+            {navGroups.map((group) => (
+              <div key={group.label} className="space-y-1">
+                <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  {group.label}
+                </p>
+                <div className="space-y-0.5 pt-1">
+                  {group.items.map((item) => {
+                    const isActive = pathname === item.href;
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 ${
+                          isActive
+                            ? 'bg-indigo-50/80 text-indigo-700 font-bold shadow-2xs border border-indigo-100'
+                            : 'text-slate-600 hover:bg-slate-100/70 hover:text-slate-900'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon
+                            className={`w-4 h-4 shrink-0 transition-colors ${
+                              isActive ? 'text-indigo-600' : 'text-slate-400'
+                            }`}
+                          />
+                          <span>{item.name}</span>
+                        </div>
+                        {isActive && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 shrink-0" />
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* User Card & Logout */}
+        {/* User Profile Footer */}
         <div className="pt-4 border-t border-slate-100">
-          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50">
+          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50/80 border border-slate-200/60">
             <div className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs uppercase shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0 shadow-2xs">
                 {user.name.charAt(0)}
               </div>
               <div className="overflow-hidden">
-                <p className="text-xs font-semibold text-slate-900 truncate">{user.name}</p>
-                <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
+                <p className="text-xs font-bold text-slate-900 truncate">{user.name}</p>
+                <p className="text-[10px] text-slate-400 font-medium truncate">{user.email}</p>
               </div>
             </div>
             <button
               onClick={logout}
-              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-white rounded-lg transition-colors"
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-white rounded-lg transition-colors cursor-pointer"
               title={t('nav.logOut')}
             >
               <LogOut className="w-4 h-4" />
@@ -130,43 +196,59 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* Main Area */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-8 flex items-center justify-between shrink-0 z-30">
+        <header className="h-16 bg-white/80 backdrop-blur-xl border-b border-slate-200/80 px-4 sm:px-8 flex items-center justify-between shrink-0 z-30">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
+              className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-xl"
               aria-label={isMobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-              <span>{t('nav.organizedPrepared')}</span>
-            </div>
+
+            {/* Quick Search trigger HUD */}
+            <button
+              type="button"
+              onClick={() => setIsCommandPaletteOpen(true)}
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100/80 hover:bg-slate-200/70 text-slate-500 hover:text-slate-900 text-xs border border-slate-200/60 transition-all cursor-pointer shadow-2xs group"
+              title={t('common.searchTooltip')}
+            >
+              <Search className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <span>{t('common.searchPlaceholder')}</span>
+              <kbd className="ms-2 px-1.5 py-0.5 text-[10px] font-mono bg-white rounded shadow-2xs text-slate-600 border border-slate-200 group-hover:border-indigo-300">
+                ⌘K
+              </kbd>
+            </button>
           </div>
 
           <div className="flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>{t('nav.organizedPrepared')}</span>
+            </div>
+
             <LanguageSwitcher />
-            <Button
+
+            <button
               type="button"
-              size="sm"
-              className="sm:hidden"
               onClick={() => setIsCreateOpen(true)}
+              className="sm:hidden p-2 rounded-xl bg-indigo-600 text-white shadow-xs"
             >
-              <Plus className="w-3.5 h-3.5" />
-            </Button>
+              <Plus className="w-4 h-4" />
+            </button>
+
             <NotificationBell />
           </div>
         </header>
 
         {/* Mobile Nav Drawer */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-b border-slate-200 p-4 space-y-2 shrink-0">
-            {navigation.map((item) => {
+          <div className="md:hidden bg-white/95 backdrop-blur-xl border-b border-slate-200 p-4 space-y-2 shrink-0 animate-in fade-in slide-in-from-top-2">
+            {navGroups.flatMap((g) => g.items).map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
               return (
@@ -175,7 +257,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold ${
-                    isActive ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600'
+                    isActive ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-600'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
@@ -192,14 +274,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         )}
 
-        {/* Page Content */}
+        {/* Page Content Viewport */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-8">
-          <div className="max-w-7xl w-full mx-auto pb-10">{children}</div>
+          <div className="max-w-7xl w-full mx-auto pb-12">{children}</div>
         </main>
       </div>
 
       {/* Global Quick Add Modal */}
       <CreateItemModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
+
+      {/* Global Command Palette (⌘K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onOpenCreate={() => setIsCreateOpen(true)}
+        onSelectItem={(item) => setSelectedItemForDetails(item)}
+      />
+
+      {/* Quick Details Modal when opened from Command Palette */}
+      <ItemDetailsModal
+        isOpen={!!selectedItemForDetails}
+        item={selectedItemForDetails}
+        onClose={() => setSelectedItemForDetails(null)}
+      />
     </div>
   );
 }

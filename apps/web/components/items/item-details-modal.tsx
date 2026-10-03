@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LifeItemDto, ItemStatus, ItemType, Priority, AttachmentDto } from '@lifedesk/types';
 import { Modal } from '@/components/ui/modal';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -36,6 +37,7 @@ export function ItemDetailsModal({ item, isOpen, onClose, onItemUpdated }: ItemD
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // Edit form state
   const [editTitle, setEditTitle] = useState('');
@@ -358,22 +360,23 @@ export function ItemDetailsModal({ item, isOpen, onClose, onItemUpdated }: ItemD
               onChange={(e) => setEditDesc(e.target.value)}
             />
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
               <Button
                 type="button"
                 variant="secondary"
-                size="sm"
+                size="md"
                 onClick={() => setIsEditing(false)}
               >
                 {t('common.cancel')}
               </Button>
               <Button
                 type="button"
-                size="sm"
+                variant="primary"
+                size="md"
                 onClick={() => updateMutation.mutate()}
                 isLoading={updateMutation.isPending}
               >
-                <Save className="w-3.5 h-3.5 me-1 shrink-0" /> {t('common.saveChanges')}
+                <Save className="w-4 h-4 me-1.5 shrink-0" /> {t('common.saveChanges')}
               </Button>
             </div>
           </div>
@@ -385,28 +388,24 @@ export function ItemDetailsModal({ item, isOpen, onClose, onItemUpdated }: ItemD
             <Button
               type="button"
               variant="danger"
-              size="sm"
-              onClick={() => {
-                if (confirm(t('modals.deleteConfirm'))) {
-                  deleteMutation.mutate();
-                }
-              }}
+              size="md"
+              onClick={() => setIsDeleteDialogOpen(true)}
               isLoading={deleteMutation.isPending}
             >
-              <Trash2 className="w-3.5 h-3.5 me-1 shrink-0" /> {t('common.delete')}
+              <Trash2 className="w-4 h-4 me-1.5 shrink-0" /> {t('common.delete')}
             </Button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               {!isCancelled && !isCompleted && (
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
+                  size="md"
                   onClick={() => cancelMutation.mutate()}
                   isLoading={cancelMutation.isPending}
                   title={t('modals.cancelItemBtn')}
                 >
-                  <XCircle className="w-3.5 h-3.5 me-1 text-slate-400 shrink-0" /> {t('modals.cancelItemBtn')}
+                  <XCircle className="w-4 h-4 me-1.5 text-slate-400 shrink-0" /> {t('modals.cancelItemBtn')}
                 </Button>
               )}
 
@@ -414,6 +413,7 @@ export function ItemDetailsModal({ item, isOpen, onClose, onItemUpdated }: ItemD
                 <Button
                   type="button"
                   variant="primary"
+                  size="md"
                   onClick={() => completeMutation.mutate()}
                   isLoading={completeMutation.isPending}
                 >
@@ -421,13 +421,25 @@ export function ItemDetailsModal({ item, isOpen, onClose, onItemUpdated }: ItemD
                 </Button>
               )}
 
-              <Button type="button" variant="secondary" onClick={onClose}>
+              <Button type="button" variant="secondary" size="md" onClick={onClose}>
                 {t('common.close')}
               </Button>
             </div>
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={() => deleteMutation.mutate()}
+        title={t('items.deleteConfirmTitle')}
+        message={t('items.deleteItemConfirm', { title: item.title })}
+        confirmText={t('common.delete')}
+        cancelText={t('common.cancel')}
+        isLoading={deleteMutation.isPending}
+        variant="danger"
+      />
     </Modal>
   );
 }

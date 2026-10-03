@@ -9,6 +9,8 @@ import { apiClient } from '@/lib/api-client';
 import { usePushNotifications, showBrowserNotification } from '@/lib/push-notifications';
 import { useTranslation } from 'react-i18next';
 
+import { Button } from './button';
+
 export function NotificationBell() {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -103,12 +105,12 @@ export function NotificationBell() {
       </button>
 
       {isOpen && (
-        <div className="absolute end-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-100 py-3 z-50 animate-in fade-in zoom-in-95 duration-150">
-          <div className="px-4 pb-2 border-b border-slate-100 flex items-center justify-between">
+        <div className="absolute end-0 mt-2 w-80 sm:w-96 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/90 py-3.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+          <div className="px-5 pb-3 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm text-slate-900">{t('notifications.title')}</span>
+              <span className="font-bold text-sm text-slate-900">{t('notifications.title')}</span>
               {unreadCount > 0 && (
-                <span className="px-1.5 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 rounded-full">
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100 font-mono">
                   {unreadCount}
                 </span>
               )}
@@ -118,7 +120,7 @@ export function NotificationBell() {
               <button
                 type="button"
                 onClick={() => markAllMutation.mutate()}
-                className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+                className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1 cursor-pointer"
               >
                 <CheckCheck className="w-3.5 h-3.5 shrink-0" /> {t('notifications.markAllRead')}
               </button>
@@ -126,19 +128,20 @@ export function NotificationBell() {
           </div>
 
           {permission === 'default' && (
-            <div className="mx-3 my-2 p-2.5 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center justify-between gap-2 text-xs">
-              <span className="text-indigo-900 font-medium text-[11px] leading-tight">
+            <div className="mx-4 my-2.5 p-3 bg-indigo-50/80 border border-indigo-100 rounded-2xl flex items-center justify-between gap-3 text-xs">
+              <span className="text-indigo-900 font-semibold text-[11px] leading-tight">
                 {t('settings.pushPromptBanner')}
               </span>
-              <button
+              <Button
                 type="button"
+                variant="primary"
+                size="sm"
                 onClick={async () => {
                   await requestPermission();
                 }}
-                className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shrink-0 transition-colors text-[11px]"
               >
                 {t('settings.enableBtn')}
-              </button>
+              </Button>
             </div>
           )}
 

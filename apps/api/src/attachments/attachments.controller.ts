@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Delete,
   Param,
@@ -20,6 +21,14 @@ if (!fs.existsSync(uploadDirectory)) {
   fs.mkdirSync(uploadDirectory, { recursive: true });
 }
 
+const ALLOWED_MIMES = new Set([
+  'application/pdf',
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+]);
+
 @UseGuards(JwtAuthGuard)
 @Controller('items/:itemId/attachments')
 export class AttachmentsController {
@@ -37,6 +46,17 @@ export class AttachmentsController {
         },
       }),
       limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+      fileFilter: (req, file, cb) => {
+        if (!ALLOWED_MIMES.has(file.mimetype)) {
+          return cb(
+            new BadRequestException(
+              'Unsupported file type. Only PDF, PNG, JPG, and WEBP files are allowed.',
+            ),
+            false,
+          );
+        }
+        cb(null, true);
+      },
     }),
   )
   upload(

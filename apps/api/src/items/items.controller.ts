@@ -35,6 +35,10 @@ export class ItemsController {
     @Query('categoryId') categoryId?: string,
     @Query('timeframe') timeframe?: 'overdue' | 'today' | 'upcoming' | 'completed' | 'all',
     @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
   ) {
     return this.itemsService.findAll(userId, {
       status,
@@ -43,6 +47,10 @@ export class ItemsController {
       categoryId,
       timeframe,
       search,
+      page: page ? parseInt(page, 10) : undefined,
+      limit: limit ? parseInt(limit, 10) : undefined,
+      startDate,
+      endDate,
     });
   }
 

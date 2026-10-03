@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react';
 import { UploadCloud, FileText, Trash2, ExternalLink } from 'lucide-react';
 import { AttachmentDto } from '@lifedesk/types';
 import { apiClient, API_BASE_URL } from '@/lib/api-client';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useTranslation } from 'react-i18next';
 
 interface FileUploadProps {
@@ -21,6 +22,8 @@ export function FileUpload({
 }: FileUploadProps) {
   const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
+  const [attachmentToDelete, setAttachmentToDelete] = useState<AttachmentDto | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,14 +64,19 @@ export function FileUpload({
     }
   };
 
-  const handleDelete = async (attachmentId: string) => {
+  const handleConfirmDelete = async () => {
+    if (!attachmentToDelete) return;
+    setIsDeleting(true);
     try {
-      await apiClient(`/items/${itemId}/attachments/${attachmentId}`, {
+      await apiClient(`/items/${itemId}/attachments/${attachmentToDelete.id}`, {
         method: 'DELETE',
       });
-      onDeleteSuccess(attachmentId);
+      onDeleteSuccess(attachmentToDelete.id);
+      setAttachmentToDelete(null);
     } catch (err: any) {
       setError(err.message || t('common.error'));
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -83,7 +91,7 @@ export function FileUpload({
       {/* Upload Zone */}
       <div
         onClick={() => fileInputRef.current?.click()}
-        className="border-2 border-dashed border-slate-200 hover:border-indigo-400 bg-slate-50/60 hover:bg-indigo-50/30 rounded-xl p-4 text-center cursor-pointer transition-colors"
+        className="border-2 border-dashed border-slate-200 hover:border-indigo-400 bg-slate-50/60 hover:bg-indigo-50/30 rounded-2xl p-5 text-center cursor-pointer transition-all duration-200 group"
       >
         <input
           ref={fileInputRef}
@@ -92,8 +100,10 @@ export function FileUpload({
           onChange={handleFileChange}
           className="hidden"
         />
-        <UploadCloud className="w-6 h-6 mx-auto text-indigo-500 mb-1.5" />
-        <p className="text-xs font-medium text-slate-700">
+        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+          <UploadCloud className="w-5 h-5" />
+        </div>
+        <p className="text-xs font-bold text-slate-800">
           {isUploading ? t('modals.uploadingFile') : t('modals.uploadZonePrompt')}
         </p>
         <p className="text-[11px] text-slate-400 mt-0.5">{t('modals.uploadZoneHint')}</p>
@@ -107,14 +117,18 @@ export function FileUpload({
           {attachments.map((att) => (
             <div
               key={att.id}
-              className="flex items-center justify-between p-2.5 bg-white border border-slate-200 rounded-lg text-xs shadow-2xs"
+              className="flex items-center justify-between p-3 bg-white border border-slate-200/80 rounded-xl text-xs shadow-2xs hover:border-slate-300 transition-colors"
             >
-              <div className="flex items-center gap-2 overflow-hidden me-2">
-                <FileText className="w-4 h-4 text-indigo-500 shrink-0" />
-                <span className="truncate font-medium text-slate-800" title={att.fileName}>
+              <div className="flex items-center gap-2.5 overflow-hidden me-2">
+                <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 shrink-0">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <span className="truncate font-semibold text-slate-800" title={att.fileName}>
                   {att.fileName}
                 </span>
-                <span className="text-slate-400 shrink-0">({formatFileSize(att.fileSize)})</span>
+                <span className="text-slate-400 font-mono text-[10px] shrink-0">
+                  ({formatFileSize(att.fileSize)})
+                </span>
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">
@@ -122,15 +136,15 @@ export function FileUpload({
                   href={`${API_BASE_URL.replace(/\/api\/?$/, '')}${att.fileUrl}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="p-1 text-slate-500 hover:text-indigo-600 rounded transition-colors"
+                  className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                   title={t('modals.viewFile')}
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
                 <button
                   type="button"
-                  onClick={() => handleDelete(att.id)}
-                  className="p-1 text-slate-400 hover:text-rose-600 rounded transition-colors"
+                  onClick={() => setAttachmentToDelete(att)}
+                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                   title={t('common.delete')}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -140,6 +154,19 @@ export function FileUpload({
           ))}
         </div>
       )}
+
+      {/* Attachment Deletion Confirmation */}
+      <ConfirmDialog
+        isOpen={!!attachmentToDelete}
+        onClose={() => setAttachmentToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title={t('modals.deleteAttachmentTitle')}
+        message={t('modals.deleteAttachmentConfirm', { name: attachmentToDelete?.fileName || '' })}
+        confirmText={t('common.delete')}
+        cancelText={t('common.cancel')}
+        isLoading={isDeleting}
+        variant="danger"
+      />
     </div>
   );
 }

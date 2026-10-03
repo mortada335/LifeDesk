@@ -2,29 +2,38 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost' | 'gradient';
+  size?: 'sm' | 'md' | 'lg' | 'icon-sm' | 'icon-md';
   isLoading?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, disabled, children, ...props }, ref) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm';
+      'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] cursor-pointer';
 
     const variants = {
-      primary: 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 shadow-indigo-100',
-      secondary: 'bg-slate-100 text-slate-800 hover:bg-slate-200 focus:ring-slate-400',
-      outline: 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus:ring-indigo-500',
-      danger: 'bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500 shadow-rose-100',
-      ghost: 'bg-transparent shadow-none text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:ring-slate-300',
+      primary:
+        'bg-indigo-600 text-white hover:bg-indigo-500 active:bg-indigo-700 shadow-sm shadow-indigo-500/25 focus-visible:ring-indigo-500 border border-indigo-700/20',
+      gradient:
+        'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-500 hover:to-violet-500 active:from-indigo-700 active:to-violet-700 shadow-md shadow-indigo-500/20 focus-visible:ring-indigo-500 border border-indigo-400/30',
+      secondary:
+        'bg-slate-100 text-slate-800 hover:bg-slate-200/90 active:bg-slate-200 focus-visible:ring-slate-300 border border-slate-200/70',
+      outline:
+        'border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 active:bg-slate-100 focus-visible:ring-indigo-500 shadow-2xs',
+      danger:
+        'bg-rose-600 text-white hover:bg-rose-500 active:bg-rose-700 focus-visible:ring-rose-500 shadow-sm shadow-rose-500/25 border border-rose-700/20',
+      ghost:
+        'bg-transparent text-slate-600 hover:bg-slate-100 active:bg-slate-200 hover:text-slate-900 focus-visible:ring-slate-200',
     };
 
     const sizes = {
-      sm: 'text-xs px-3 py-1.5 gap-1.5',
-      md: 'text-sm px-4 py-2 gap-2',
-      lg: 'text-base px-5 py-2.5 gap-2.5',
+      sm: 'text-xs px-3 py-1.5 h-8 gap-1.5 rounded-xl',
+      md: 'text-xs sm:text-sm px-4 py-2 h-10 gap-2 rounded-xl',
+      lg: 'text-sm sm:text-base px-5 py-2.5 h-11 gap-2.5 rounded-2xl font-bold',
+      'icon-sm': 'w-8 h-8 p-0 rounded-xl shrink-0',
+      'icon-md': 'w-10 h-10 p-0 rounded-xl shrink-0',
     };
 
     return (
@@ -35,8 +44,19 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading && (
-          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <svg
+            className="animate-spin me-2 h-4 w-4 shrink-0 text-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
             <path
               className="opacity-75"
               fill="currentColor"

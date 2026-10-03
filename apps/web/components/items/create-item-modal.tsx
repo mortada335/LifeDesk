@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ItemType, Priority, Recurrence, CategoryDto } from '@lifedesk/types';
@@ -10,13 +10,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/lib/api-client';
-import { Paperclip, UploadCloud, X } from 'lucide-react';
+import { Paperclip, UploadCloud, X, Check, Bell, Calendar, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface CreateItemModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultType?: ItemType;
+  defaultDueDate?: string;
 }
 
 interface FormValues {
@@ -37,12 +38,17 @@ interface FormValues {
   reminder30Days: boolean;
 }
 
-export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }: CreateItemModalProps) {
+export function CreateItemModal({
+  isOpen,
+  onClose,
+  defaultType = ItemType.TASK,
+  defaultDueDate,
+}: CreateItemModalProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: categories = [] } = useQuery<CategoryDto[]>({
     queryKey: ['categories'],
@@ -55,6 +61,7 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
@@ -62,7 +69,7 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
       description: '',
       type: defaultType,
       priority: Priority.MEDIUM,
-      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      dueDate: defaultDueDate || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       recurrence: Recurrence.NONE,
       reminder1Day: true,
       reminder3Days: true,
@@ -71,7 +78,27 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
     },
   });
 
+  useEffect(() => {
+    if (isOpen) {
+      reset({
+        title: '',
+        description: '',
+        type: defaultType,
+        priority: Priority.MEDIUM,
+        dueDate: defaultDueDate || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        recurrence: Recurrence.NONE,
+        reminder1Day: true,
+        reminder3Days: true,
+        reminder7Days: false,
+        reminder30Days: false,
+      });
+      setSelectedFile(null);
+      setServerError(null);
+    }
+  }, [isOpen, defaultType, defaultDueDate, reset]);
+
   const selectedType = watch('type');
+  const selectedPriority = watch('priority');
 
   const createMutation = useMutation({
     mutationFn: async (payload: any) => {
@@ -149,7 +176,7 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {serverError && (
-          <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700">
+          <div className="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700 font-medium animate-in fade-in">
             {serverError}
           </div>
         )}
@@ -177,15 +204,46 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
             {...register('type')}
           />
 
-          <Select
-            label={t('modals.priorityLabel')}
-            options={[
-              { label: `🔴 ${t('common.priorities.high')}`, value: Priority.HIGH },
-              { label: `🟡 ${t('common.priorities.medium')}`, value: Priority.MEDIUM },
-              { label: `🟢 ${t('common.priorities.low')}`, value: Priority.LOW },
-            ]}
-            {...register('priority')}
-          />
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+              {t('modals.priorityLabel')}
+            </label>
+            <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100/80 rounded-xl border border-slate-200/60">
+              <button
+                type="button"
+                onClick={() => setValue('priority', Priority.LOW)}
+                className={`py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                  selectedPriority === Priority.LOW
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {t('common.priorities.low')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setValue('priority', Priority.MEDIUM)}
+                className={`py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                  selectedPriority === Priority.MEDIUM
+                    ? 'bg-amber-500 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {t('common.priorities.medium')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setValue('priority', Priority.HIGH)}
+                className={`py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                  selectedPriority === Priority.HIGH
+                    ? 'bg-rose-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {t('common.priorities.high')}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Category */}
@@ -216,7 +274,7 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
 
         {/* Dynamic Fields for Bills & Subscriptions */}
         {(selectedType === ItemType.BILL || selectedType === ItemType.SUBSCRIPTION) && (
-          <div className="p-3.5 bg-indigo-50/50 rounded-xl border border-indigo-100 space-y-3">
+          <div className="p-4 bg-indigo-50/60 rounded-2xl border border-indigo-100 space-y-3 animate-in fade-in">
             <Input
               label={t('modals.amountLabel')}
               type="number"
@@ -229,7 +287,7 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
 
         {/* Dynamic Fields for Documents */}
         {selectedType === ItemType.DOCUMENT && (
-          <div className="p-3.5 bg-amber-50/50 rounded-xl border border-amber-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="p-4 bg-amber-50/60 rounded-2xl border border-amber-100 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-in fade-in">
             <Input
               label={t('modals.docNumberLabel')}
               placeholder="e.g. A12345678"
@@ -256,27 +314,44 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
           {...register('recurrence')}
         />
 
-        {/* Reminders Checkboxes */}
+        {/* Reminders Checkboxes styled as toggle pills */}
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
-            {t('modals.reminderLabel')}
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-1.5">
+            <Bell className="w-3.5 h-3.5 text-indigo-600" />
+            <span>{t('modals.reminderLabel')}</span>
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-            <label className="flex items-center gap-2 p-2 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 cursor-pointer">
-              <input type="checkbox" className="rounded text-indigo-600 focus:ring-indigo-500" {...register('reminder1Day')} />
-              <span>{t('dashboard.daysRemaining', { count: 1 })}</span>
+            <label className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200/80 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer"
+                {...register('reminder1Day')}
+              />
+              <span className="font-medium text-slate-700">{t('dashboard.daysRemaining', { count: 1 })}</span>
             </label>
-            <label className="flex items-center gap-2 p-2 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 cursor-pointer">
-              <input type="checkbox" className="rounded text-indigo-600 focus:ring-indigo-500" {...register('reminder3Days')} />
-              <span>{t('dashboard.daysRemaining_plural', { count: 3 })}</span>
+            <label className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200/80 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer"
+                {...register('reminder3Days')}
+              />
+              <span className="font-medium text-slate-700">{t('dashboard.daysRemaining_plural', { count: 3 })}</span>
             </label>
-            <label className="flex items-center gap-2 p-2 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 cursor-pointer">
-              <input type="checkbox" className="rounded text-indigo-600 focus:ring-indigo-500" {...register('reminder7Days')} />
-              <span>{t('dashboard.daysRemaining_plural', { count: 7 })}</span>
+            <label className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200/80 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer"
+                {...register('reminder7Days')}
+              />
+              <span className="font-medium text-slate-700">{t('dashboard.daysRemaining_plural', { count: 7 })}</span>
             </label>
-            <label className="flex items-center gap-2 p-2 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 cursor-pointer">
-              <input type="checkbox" className="rounded text-indigo-600 focus:ring-indigo-500" {...register('reminder30Days')} />
-              <span>{t('dashboard.daysRemaining_plural', { count: 30 })}</span>
+            <label className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200/80 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer"
+                {...register('reminder30Days')}
+              />
+              <span className="font-medium text-slate-700">{t('dashboard.daysRemaining_plural', { count: 30 })}</span>
             </label>
           </div>
         </div>
@@ -312,11 +387,11 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
           />
 
           {selectedFile ? (
-            <div className="flex items-center justify-between p-2.5 bg-indigo-50/60 border border-indigo-200 rounded-xl text-xs">
+            <div className="flex items-center justify-between p-3 bg-indigo-50/70 border border-indigo-200 rounded-2xl text-xs">
               <div className="flex items-center gap-2 overflow-hidden">
                 <Paperclip className="w-4 h-4 text-indigo-600 shrink-0" />
-                <span className="truncate font-medium text-slate-800">{selectedFile.name}</span>
-                <span className="text-slate-400 shrink-0">
+                <span className="truncate font-semibold text-slate-900">{selectedFile.name}</span>
+                <span className="text-slate-400 shrink-0 font-mono text-[10px]">
                   ({(selectedFile.size / 1024).toFixed(0)} KB)
                 </span>
               </div>
@@ -326,7 +401,7 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
                   setSelectedFile(null);
                   if (fileInputRef.current) fileInputRef.current.value = '';
                 }}
-                className="p-1 text-slate-400 hover:text-rose-600 transition-colors"
+                className="p-1 text-slate-400 hover:text-rose-600 rounded-lg transition-colors cursor-pointer"
                 title={t('common.delete')}
               >
                 <X className="w-4 h-4" />
@@ -336,7 +411,7 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full flex items-center justify-center gap-2 p-3 border border-dashed border-slate-200 hover:border-indigo-400 bg-slate-50/50 hover:bg-indigo-50/30 rounded-xl text-xs font-medium text-slate-600 transition-colors cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-slate-200 hover:border-indigo-400 bg-slate-50/60 hover:bg-indigo-50/30 rounded-2xl text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-all cursor-pointer"
             >
               <UploadCloud className="w-4 h-4 text-indigo-500" />
               <span>{t('modals.uploadZonePrompt')}</span>
@@ -345,7 +420,7 @@ export function CreateItemModal({ isOpen, onClose, defaultType = ItemType.TASK }
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
           <Button type="button" variant="secondary" onClick={onClose}>
             {t('common.cancel')}
           </Button>
