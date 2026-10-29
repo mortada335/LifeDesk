@@ -9,14 +9,15 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
     "lint": "echo ok",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test": "jest --watchman=false",
+    "test:watch": "jest --watchman=false --watch",
+    "test:cov": "jest --watchman=false --coverage",
+    "test:e2e": "jest --watchman=false --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@lifedesk/types": "workspace:*",

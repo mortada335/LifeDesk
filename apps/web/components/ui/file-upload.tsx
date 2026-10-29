@@ -91,7 +91,7 @@ export function FileUpload({
       {/* Upload Zone */}
       <div
         onClick={() => fileInputRef.current?.click()}
-        className="border-2 border-dashed border-slate-200 hover:border-indigo-400 bg-slate-50/60 hover:bg-indigo-50/30 rounded-2xl p-5 text-center cursor-pointer transition-all duration-200 group"
+        className="border-2 border-dashed border-slate-200 hover:border-slate-400 bg-slate-50/60 hover:bg-slate-100/60 rounded-2xl p-5 text-center cursor-pointer transition-all duration-200 group"
       >
         <input
           ref={fileInputRef}
@@ -100,7 +100,7 @@ export function FileUpload({
           onChange={handleFileChange}
           className="hidden"
         />
-        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+        <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
           <UploadCloud className="w-5 h-5" />
         </div>
         <p className="text-xs font-bold text-slate-800">
@@ -120,7 +120,7 @@ export function FileUpload({
               className="flex items-center justify-between p-3 bg-white border border-slate-200/80 rounded-xl text-xs shadow-2xs hover:border-slate-300 transition-colors"
             >
               <div className="flex items-center gap-2.5 overflow-hidden me-2">
-                <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 shrink-0">
+                <div className="p-1.5 rounded-lg bg-slate-100 text-slate-700 shrink-0">
                   <FileText className="w-4 h-4" />
                 </div>
                 <span className="truncate font-semibold text-slate-800" title={att.fileName}>
@@ -136,7 +136,7 @@ export function FileUpload({
                   href={`${API_BASE_URL.replace(/\/api\/?$/, '')}${att.fileUrl}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                  className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                   title={t('modals.viewFile')}
                 >
                   <ExternalLink className="w-3.5 h-3.5" />

@@ -159,7 +159,7 @@ export function ItemDetailsModal({ item, isOpen, onClose, onItemUpdated }: ItemD
       onClose={onClose}
       title={isEditing ? t('common.edit') : item.title}
       description={`${t('activity.actions.created')} ${new Date(item.createdAt).toLocaleDateString(i18n.language)}`}
-      maxWidth="lg"
+      maxWidth="2xl"
     >
       <div className="space-y-5">
         {!isEditing ? (
@@ -193,7 +193,7 @@ export function ItemDetailsModal({ item, isOpen, onClose, onItemUpdated }: ItemD
             {/* Due Date & Recurrence Banner */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 text-xs">
               <div className="flex items-center gap-2.5 text-slate-700">
-                <Calendar className="w-4 h-4 text-indigo-500 shrink-0" />
+                <Calendar className="w-4 h-4 text-slate-700 shrink-0" />
                 <div>
                   <p className="font-semibold">{t('common.dueDate')}</p>
                   <p className="text-slate-500">
@@ -213,7 +213,7 @@ export function ItemDetailsModal({ item, isOpen, onClose, onItemUpdated }: ItemD
               </div>
 
               <div className="flex items-center gap-2.5 text-slate-700">
-                <RefreshCw className="w-4 h-4 text-purple-500 shrink-0" />
+                <RefreshCw className="w-4 h-4 text-blue-600 shrink-0" />
                 <div>
                   <p className="font-semibold">{t('modals.recurrenceLabel')}</p>
                   <p className="text-slate-500">

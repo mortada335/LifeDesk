@@ -25,6 +25,7 @@ import { ItemDetailsModal } from '@/components/items/item-details-modal';
 import { CommandPalette } from '@/components/ui/command-palette';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
+import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 import { useTranslation } from 'react-i18next';
 import { LifeItemDto } from '@lifedesk/types';
 
@@ -59,7 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-semibold text-slate-600">{t('common.loading')}</p>
         </div>
       </div>
@@ -100,13 +101,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* Logo & Workspace Tag */}
           <div className="flex items-center justify-between px-1">
             <Link href="/dashboard" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center font-extrabold text-xl shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
+              <div className="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-extrabold text-xl shadow-xs border border-slate-800 group-hover:bg-slate-800 transition-colors duration-200">
                 L
               </div>
               <div>
                 <span className="font-extrabold text-slate-900 tracking-tight text-base flex items-center gap-1.5">
                   LifeDesk
-                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">PRO</span>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">PRO</span>
                 </span>
                 <span className="text-[10px] block text-slate-400 font-medium tracking-wide">
                   {t('common.subTagline')}
@@ -118,7 +119,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* Quick Add CTA */}
           <Button
             type="button"
-            variant="gradient"
+            variant="primary"
             size="md"
             onClick={() => setIsCreateOpen(true)}
             className="w-full justify-between"
@@ -149,20 +150,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         href={item.href}
                         className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 ${
                           isActive
-                            ? 'bg-indigo-50/80 text-indigo-700 font-bold shadow-2xs border border-indigo-100'
+                            ? 'bg-slate-100/90 text-slate-950 font-bold shadow-2xs border border-slate-200/80'
                             : 'text-slate-600 hover:bg-slate-100/70 hover:text-slate-900'
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           <Icon
                             className={`w-4 h-4 shrink-0 transition-colors ${
-                              isActive ? 'text-indigo-600' : 'text-slate-400'
+                              isActive ? 'text-slate-900' : 'text-slate-400'
                             }`}
                           />
                           <span>{item.name}</span>
                         </div>
                         {isActive && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 shrink-0" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-900 shrink-0" />
                         )}
                       </Link>
                     );
@@ -177,7 +178,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="pt-4 border-t border-slate-100">
           <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50/80 border border-slate-200/60">
             <div className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0 shadow-2xs">
+              <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0 shadow-2xs">
                 {user.name.charAt(0)}
               </div>
               <div className="overflow-hidden">
@@ -217,9 +218,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100/80 hover:bg-slate-200/70 text-slate-500 hover:text-slate-900 text-xs border border-slate-200/60 transition-all cursor-pointer shadow-2xs group"
               title={t('common.searchTooltip')}
             >
-              <Search className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <Search className="w-3.5 h-3.5 text-slate-500 shrink-0" />
               <span>{t('common.searchPlaceholder')}</span>
-              <kbd className="ms-2 px-1.5 py-0.5 text-[10px] font-mono bg-white rounded shadow-2xs text-slate-600 border border-slate-200 group-hover:border-indigo-300">
+              <kbd className="ms-2 px-1.5 py-0.5 text-[10px] font-mono bg-white rounded shadow-2xs text-slate-600 border border-slate-200 group-hover:border-slate-400">
                 ⌘K
               </kbd>
             </button>
@@ -231,12 +232,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <span>{t('nav.organizedPrepared')}</span>
             </div>
 
+            <ThemeSwitcher />
             <LanguageSwitcher />
 
             <button
               type="button"
               onClick={() => setIsCreateOpen(true)}
-              className="sm:hidden p-2 rounded-xl bg-indigo-600 text-white shadow-xs"
+              className="sm:hidden p-2 rounded-xl bg-slate-900 text-white shadow-xs"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -257,7 +259,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold ${
-                    isActive ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-600'
+                    isActive ? 'bg-slate-100 text-slate-950 font-bold border border-slate-200' : 'text-slate-600'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />

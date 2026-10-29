@@ -161,8 +161,8 @@ export default function DashboardOverviewPage() {
       {/* Hero Welcome HUD */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200/60">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
-            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            <span className="w-2 h-2 rounded-full bg-slate-400" />
             <span>{todayFormatted}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
@@ -175,7 +175,7 @@ export default function DashboardOverviewPage() {
 
         <Button
           type="button"
-          variant="gradient"
+          variant="primary"
           size="md"
           onClick={() => setIsCreateOpen(true)}
         >
@@ -271,7 +271,7 @@ export default function DashboardOverviewPage() {
 
           <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
             <span>{t('landing.featureRadarTitle')}</span>
-            <span className="font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-full text-[11px]">
+            <span className="font-bold text-slate-800 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full text-[11px]">
               🔔 {summary?.activeRemindersCount ?? 0}
             </span>
           </div>
@@ -285,7 +285,7 @@ export default function DashboardOverviewPage() {
             </span>
             <a
               href="/dashboard/categories"
-              className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 group"
+              className="text-xs font-bold text-slate-900 hover:text-slate-700 flex items-center gap-1 group"
             >
               <span>{t('categories.title')}</span>
               <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform rtl:rotate-180" />
@@ -373,7 +373,7 @@ export default function DashboardOverviewPage() {
 
           <a
             href="/dashboard/items"
-            className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 group"
+            className="text-xs font-bold text-slate-900 hover:text-slate-700 flex items-center gap-1 group"
           >
             <span>{t('items.title')}</span>
             <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform rtl:rotate-180" />
@@ -384,12 +384,12 @@ export default function DashboardOverviewPage() {
         <div className="divide-y divide-slate-100">
           {itemsLoading ? (
             <div className="py-16 text-center text-xs text-slate-400 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
               <span>{t('common.loading')}</span>
             </div>
           ) : items.length === 0 ? (
             <div className="py-16 text-center px-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center mx-auto mb-3">
                 <Sparkles className="w-6 h-6" />
               </div>
               <h3 className="text-sm font-bold text-slate-800">
@@ -452,7 +452,7 @@ export default function DashboardOverviewPage() {
                       <div className="flex flex-wrap items-center gap-2">
                         <span
                           className={`text-sm font-bold truncate transition-colors ${
-                            isCompleted ? 'line-through text-slate-400' : 'text-slate-900 group-hover:text-indigo-600'
+                            isCompleted ? 'line-through text-slate-400' : 'text-slate-900 group-hover:text-blue-600'
                           }`}
                         >
                           {item.title}
@@ -494,14 +494,14 @@ export default function DashboardOverviewPage() {
                         )}
 
                         {item.attachments && item.attachments.length > 0 && (
-                          <span className="flex items-center gap-1 text-indigo-600 font-semibold">
+                          <span className="flex items-center gap-1 text-slate-600 font-semibold">
                             <FileText className="w-3 h-3 shrink-0" />
                             <span>{item.attachments.length}</span>
                           </span>
                         )}
 
                         {item.recurrence && item.recurrence !== 'NONE' && (
-                          <span className="text-purple-600 font-semibold bg-purple-50 px-1.5 py-0.2 rounded">
+                          <span className="text-blue-700 font-semibold bg-blue-50 border border-blue-100 px-1.5 py-0.2 rounded">
                             🔄 {item.recurrence}
                           </span>
                         )}

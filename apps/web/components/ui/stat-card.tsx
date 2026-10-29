@@ -7,7 +7,7 @@ interface StatCardProps {
   value: string | number;
   subtitle?: string;
   icon: LucideIcon;
-  color?: 'red' | 'amber' | 'blue' | 'emerald' | 'indigo' | 'slate';
+  color?: 'red' | 'amber' | 'blue' | 'emerald' | 'slate';
   onClick?: () => void;
 }
 
@@ -16,45 +16,39 @@ export function StatCard({
   value,
   subtitle,
   icon: Icon,
-  color = 'indigo',
+  color = 'slate',
   onClick,
 }: StatCardProps) {
   const colorMap = {
     red: {
-      card: 'bg-gradient-to-br from-white via-rose-50/30 to-rose-100/40 border-rose-200/80 hover:border-rose-300 hover:shadow-rose-500/10',
-      iconBox: 'bg-rose-500 text-white shadow-rose-500/20 shadow-md',
-      value: 'text-rose-950',
-      accent: 'bg-rose-500',
+      card: 'bg-white border-slate-200/90 hover:border-rose-300/80 hover:shadow-sm',
+      iconBox: 'bg-rose-600 text-white shadow-sm',
+      value: 'text-slate-900',
+      accent: 'bg-rose-600',
     },
     amber: {
-      card: 'bg-gradient-to-br from-white via-amber-50/30 to-amber-100/40 border-amber-200/80 hover:border-amber-300 hover:shadow-amber-500/10',
-      iconBox: 'bg-amber-500 text-white shadow-amber-500/20 shadow-md',
-      value: 'text-amber-950',
+      card: 'bg-white border-slate-200/90 hover:border-amber-300/80 hover:shadow-sm',
+      iconBox: 'bg-amber-500 text-white shadow-sm',
+      value: 'text-slate-900',
       accent: 'bg-amber-500',
     },
     blue: {
-      card: 'bg-gradient-to-br from-white via-sky-50/30 to-sky-100/40 border-sky-200/80 hover:border-sky-300 hover:shadow-sky-500/10',
-      iconBox: 'bg-sky-500 text-white shadow-sky-500/20 shadow-md',
-      value: 'text-sky-950',
-      accent: 'bg-sky-500',
+      card: 'bg-white border-slate-200/90 hover:border-blue-300/80 hover:shadow-sm',
+      iconBox: 'bg-blue-600 text-white shadow-sm',
+      value: 'text-slate-900',
+      accent: 'bg-blue-600',
     },
     emerald: {
-      card: 'bg-gradient-to-br from-white via-emerald-50/30 to-emerald-100/40 border-emerald-200/80 hover:border-emerald-300 hover:shadow-emerald-500/10',
-      iconBox: 'bg-emerald-500 text-white shadow-emerald-500/20 shadow-md',
-      value: 'text-emerald-950',
-      accent: 'bg-emerald-500',
-    },
-    indigo: {
-      card: 'bg-gradient-to-br from-white via-indigo-50/30 to-indigo-100/40 border-indigo-200/80 hover:border-indigo-300 hover:shadow-indigo-500/10',
-      iconBox: 'bg-indigo-600 text-white shadow-indigo-500/20 shadow-md',
-      value: 'text-indigo-950',
-      accent: 'bg-indigo-600',
+      card: 'bg-white border-slate-200/90 hover:border-emerald-300/80 hover:shadow-sm',
+      iconBox: 'bg-emerald-600 text-white shadow-sm',
+      value: 'text-slate-900',
+      accent: 'bg-emerald-600',
     },
     slate: {
-      card: 'bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-slate-500/10',
-      iconBox: 'bg-slate-800 text-white shadow-slate-500/20 shadow-md',
+      card: 'bg-white border-slate-200/90 hover:border-slate-300 hover:shadow-sm',
+      iconBox: 'bg-slate-900 text-white shadow-sm',
       value: 'text-slate-900',
-      accent: 'bg-slate-600',
+      accent: 'bg-slate-900',
     },
   };
 

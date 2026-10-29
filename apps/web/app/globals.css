@@ -4,11 +4,32 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+html[data-theme="nordic"] {
   --background: #f8fafc;
   --foreground: #090d16;
-  --brand-primary: #4f46e5;
-  --brand-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --brand-primary: #0f172a;
+  --brand-accent: #2563eb;
+  --card-bg: #ffffff;
+  --card-border: rgba(226, 232, 240, 0.9);
+}
+
+html[data-theme="forest"] {
+  --background: #f5f4ed;
+  --foreground: #14281d;
+  --brand-primary: #154530;
+  --brand-accent: #15803d;
+  --card-bg: #faf9f5;
+  --card-border: #ded8c8;
+}
+
+html[data-theme="obsidian"] {
+  --background: #090d14;
+  --foreground: #f8fafc;
+  --brand-primary: #f59e0b;
+  --brand-accent: #fbbf24;
+  --card-bg: #121824;
+  --card-border: #222c3d;
 }
 
 body {
@@ -18,6 +39,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Monospace font for document numbers, amounts, dates */
@@ -25,42 +47,183 @@ body {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Glassmorphism Panels */
+/* Refined Structured Panels */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(226, 232, 240, 0.85);
 }
 
 .glass-card {
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, rgba(226, 232, 240, 0.9));
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(199, 210, 254, 0.9);
-  box-shadow: 0 6px 20px -4px rgba(79, 70, 229, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.02);
   transform: translateY(-1px);
 }
 
-/* Sleek Glowing Elements */
-.glow-indigo {
-  box-shadow: 0 0 25px -5px rgba(79, 70, 229, 0.25);
+/* ==========================================================================
+   Theme: Forest & Linen (Warm Editorial Linen + Racing Green)
+   ========================================================================== */
+[data-theme="forest"] body,
+[data-theme="forest"] .bg-slate-50,
+[data-theme="forest"] .bg-slate-50\/70,
+[data-theme="forest"] .bg-slate-50\/50,
+[data-theme="forest"] .bg-slate-50\/40 {
+  background-color: #f5f4ed !important;
 }
 
-.glow-rose {
-  box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.25);
+[data-theme="forest"] .bg-white,
+[data-theme="forest"] .bg-white\/90,
+[data-theme="forest"] .bg-white\/80,
+[data-theme="forest"] .bg-white\/85,
+[data-theme="forest"] .bg-white\/95,
+[data-theme="forest"] .glass-panel,
+[data-theme="forest"] .glass-card {
+  background-color: #faf9f5 !important;
+  border-color: #ded8c8 !important;
 }
 
-.glow-amber {
-  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.25);
+[data-theme="forest"] .bg-slate-100,
+[data-theme="forest"] .bg-slate-100\/80,
+[data-theme="forest"] .bg-slate-100\/70 {
+  background-color: #ede9dc !important;
 }
 
-.glow-emerald {
-  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+[data-theme="forest"] .border-slate-200,
+[data-theme="forest"] .border-slate-200\/80,
+[data-theme="forest"] .border-slate-200\/60,
+[data-theme="forest"] .border-slate-100 {
+  border-color: #ded8c8 !important;
+}
+
+[data-theme="forest"] .text-slate-900 {
+  color: #14281d !important;
+}
+
+[data-theme="forest"] .text-slate-800,
+[data-theme="forest"] .text-slate-700 {
+  color: #233b2e !important;
+}
+
+[data-theme="forest"] .text-slate-600,
+[data-theme="forest"] .text-slate-500 {
+  color: #52685a !important;
+}
+
+[data-theme="forest"] .bg-slate-900 {
+  background-color: #154530 !important;
+  color: #f5f4ed !important;
+}
+
+[data-theme="forest"] .bg-slate-900:hover,
+[data-theme="forest"] .hover\:bg-slate-800:hover {
+  background-color: #0f3524 !important;
+}
+
+[data-theme="forest"] input,
+[data-theme="forest"] select,
+[data-theme="forest"] textarea {
+  background-color: #faf9f5 !important;
+  color: #14281d !important;
+  border-color: #ded8c8 !important;
+}
+
+[data-theme="forest"] .hover\:bg-slate-50:hover,
+[data-theme="forest"] .hover\:bg-slate-50\/50:hover,
+[data-theme="forest"] .hover\:bg-slate-100:hover {
+  background-color: #ede9dc !important;
+}
+
+/* ==========================================================================
+   Theme: Obsidian Amber (Deep Carbon Midnight + Molten Amber/Gold)
+   ========================================================================== */
+[data-theme="obsidian"] body,
+[data-theme="obsidian"] .bg-slate-50,
+[data-theme="obsidian"] .bg-slate-50\/70,
+[data-theme="obsidian"] .bg-slate-50\/50,
+[data-theme="obsidian"] .bg-slate-50\/40 {
+  background-color: #090d14 !important;
+}
+
+[data-theme="obsidian"] .bg-white,
+[data-theme="obsidian"] .bg-white\/90,
+[data-theme="obsidian"] .bg-white\/80,
+[data-theme="obsidian"] .bg-white\/85,
+[data-theme="obsidian"] .bg-white\/95,
+[data-theme="obsidian"] .glass-panel,
+[data-theme="obsidian"] .glass-card {
+  background-color: #121824 !important;
+  border-color: #222c3d !important;
+}
+
+[data-theme="obsidian"] .bg-slate-100,
+[data-theme="obsidian"] .bg-slate-100\/80,
+[data-theme="obsidian"] .bg-slate-100\/70 {
+  background-color: #1b2434 !important;
+}
+
+[data-theme="obsidian"] .border-slate-200,
+[data-theme="obsidian"] .border-slate-200\/80,
+[data-theme="obsidian"] .border-slate-200\/60,
+[data-theme="obsidian"] .border-slate-100 {
+  border-color: #222c3d !important;
+}
+
+[data-theme="obsidian"] .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+[data-theme="obsidian"] .text-slate-800,
+[data-theme="obsidian"] .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="obsidian"] .text-slate-600,
+[data-theme="obsidian"] .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+[data-theme="obsidian"] .bg-slate-900 {
+  background-color: #f59e0b !important;
+  color: #090d14 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="obsidian"] .bg-slate-900:hover,
+[data-theme="obsidian"] .hover\:bg-slate-800:hover {
+  background-color: #d97706 !important;
+  color: #090d14 !important;
+}
+
+[data-theme="obsidian"] input,
+[data-theme="obsidian"] select,
+[data-theme="obsidian"] textarea {
+  background-color: #161f2e !important;
+  color: #f8fafc !important;
+  border-color: #2b384e !important;
+}
+
+[data-theme="obsidian"] input::placeholder,
+[data-theme="obsidian"] textarea::placeholder {
+  color: #64748b !important;
+}
+
+[data-theme="obsidian"] .hover\:bg-slate-50:hover,
+[data-theme="obsidian"] .hover\:bg-slate-50\/50:hover,
+[data-theme="obsidian"] .hover\:bg-slate-100:hover {
+  background-color: #1b2434 !important;
+}
+
+[data-theme="obsidian"] .shadow-card,
+[data-theme="obsidian"] .shadow-xs,
+[data-theme="obsidian"] .shadow-2xs {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45) !important;
 }
 
 /* Modern Minimalist Scrollbar */
@@ -77,6 +240,20 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+[data-theme="obsidian"] ::-webkit-scrollbar-thumb {
+  background: #2b384e;
+}
+[data-theme="obsidian"] ::-webkit-scrollbar-thumb:hover {
+  background: #3b4c68;
+}
+
+[data-theme="forest"] ::-webkit-scrollbar-thumb {
+  background: #ded8c8;
+}
+[data-theme="forest"] ::-webkit-scrollbar-thumb:hover {
+  background: #b8b19e;
 }
 
 /* Subtle micro-animation keyframes */

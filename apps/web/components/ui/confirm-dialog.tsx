@@ -67,7 +67,7 @@ export function ConfirmDialog({
                     ? 'bg-rose-50 text-rose-600 border-rose-100'
                     : variant === 'warning'
                     ? 'bg-amber-50 text-amber-600 border-amber-100'
-                    : 'bg-indigo-50 text-indigo-600 border-indigo-100'
+                    : 'bg-slate-100 text-slate-800 border-slate-200'
                 }`}
               >
                 {variant === 'danger' ? (

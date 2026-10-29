@@ -7,12 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { apiClient } from '@/lib/api-client';
-import { User, Lock, CheckCircle2, Globe, Bell, Send, AlertCircle, Shield, LogOut } from 'lucide-react';
+import { User, Lock, CheckCircle2, Globe, Bell, Send, AlertCircle, Shield, LogOut, Palette } from 'lucide-react';
 import { usePushNotifications } from '@/lib/push-notifications';
 import { useTranslation } from 'react-i18next';
+import { useTheme, AVAILABLE_THEMES } from '@/lib/theme-context';
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation();
+  const { theme, setTheme } = useTheme();
   const { user, logout, updateUser } = useAuth();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
@@ -24,6 +26,15 @@ export default function SettingsPage() {
   const [profileMsg, setProfileMsg] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
+
+  React.useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setTimezone(user.timezone || 'UTC');
+      setStartOfWeek(user.startOfWeek || 'monday');
+      setDateFormat(user.dateFormat || 'MM/DD/YYYY');
+    }
+  }, [user]);
 
   // Password form state
   const [oldPassword, setOldPassword] = useState('');
@@ -86,8 +97,8 @@ export default function SettingsPage() {
     <div className="max-w-4xl space-y-6">
       {/* Header */}
       <div className="pb-2 border-b border-slate-200/60">
-        <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
-          <span className="w-2 h-2 rounded-full bg-indigo-500" />
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+          <span className="w-2 h-2 rounded-full bg-slate-400" />
           <span>{t('settings.title')}</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
@@ -103,7 +114,7 @@ export default function SettingsPage() {
         <form onSubmit={handleUpdateProfile} className="p-6 sm:p-8 space-y-5">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <User className="w-4 h-4 text-indigo-600" /> {t('settings.profileSection')}
+              <User className="w-4 h-4 text-slate-700" /> {t('settings.profileSection')}
             </h2>
             {profileMsg && (
               <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1.5 animate-in fade-in">
@@ -208,11 +219,72 @@ export default function SettingsPage() {
           </div>
         </form>
 
+        {/* Appearance & Color Palette Section */}
+        <div className="p-6 sm:p-8 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Palette className="w-4 h-4 text-slate-700" />
+                {i18n.language === 'ar' ? 'المظهر ونمط الألوان' : 'Color Palette & Theme'}
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {i18n.language === 'ar'
+                  ? 'اختر النمط البصري المفضل لديك بألوان متناسقة وفريدة'
+                  : 'Choose your preferred aesthetic style with distinct, handcrafted UI colors'}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            {AVAILABLE_THEMES.map((tConfig) => {
+              const isSelected = theme === tConfig.id;
+              return (
+                <button
+                  key={tConfig.id}
+                  type="button"
+                  onClick={() => setTheme(tConfig.id)}
+                  className={`p-4 rounded-2xl border text-start transition-all cursor-pointer relative overflow-hidden group ${
+                    isSelected
+                      ? 'border-slate-900 ring-2 ring-slate-900/10 shadow-sm bg-white'
+                      : 'border-slate-200/80 hover:border-slate-300 bg-slate-50/50 hover:bg-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="w-4 h-4 rounded-full border border-black/10 shadow-2xs shrink-0"
+                        style={{ backgroundColor: tConfig.bgColor }}
+                      />
+                      <span
+                        className="w-4 h-4 rounded-full border border-black/10 shadow-2xs shrink-0"
+                        style={{ backgroundColor: tConfig.primaryColor }}
+                      />
+                      <span
+                        className="w-4 h-4 rounded-full border border-black/10 shadow-2xs shrink-0"
+                        style={{ backgroundColor: tConfig.accentColor }}
+                      />
+                    </div>
+                    {isSelected && (
+                      <span className="w-2 h-2 rounded-full bg-slate-900" />
+                    )}
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900">
+                    {i18n.language === 'ar' ? tConfig.nameAr : tConfig.name}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                    {tConfig.description}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Change Password Form */}
         <form onSubmit={handleChangePassword} className="p-6 sm:p-8 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Lock className="w-4 h-4 text-indigo-600" /> {t('settings.changePasswordSection')}
+              <Lock className="w-4 h-4 text-slate-700" /> {t('settings.changePasswordSection')}
             </h2>
             {passMsg && (
               <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1.5 animate-in fade-in">
@@ -262,7 +334,7 @@ export default function SettingsPage() {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="space-y-1">
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <Bell className="w-4 h-4 text-indigo-600" /> {t('settings.pushNotificationsSection')}
+                <Bell className="w-4 h-4 text-slate-700" /> {t('settings.pushNotificationsSection')}
               </h2>
               <p className="text-xs text-slate-500 max-w-xl">
                 {t('settings.pushNotificationsDesc')}
@@ -285,7 +357,7 @@ export default function SettingsPage() {
                     }
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-all cursor-pointer shadow-xs"
                   >
-                    <Send className="w-3 h-3 text-indigo-600 shrink-0" />
+                    <Send className="w-3 h-3 text-slate-600 shrink-0" />
                     <span>{t('settings.sendTestPushBtn')}</span>
                   </button>
                 </>
@@ -299,7 +371,7 @@ export default function SettingsPage() {
                   onClick={async () => {
                     await requestPermission();
                   }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 shadow-sm shadow-indigo-500/20 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 shadow-sm transition-all cursor-pointer"
                 >
                   <Bell className="w-3.5 h-3.5 shrink-0" />
                   <span>{t('settings.enablePushBtn')}</span>

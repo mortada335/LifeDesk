@@ -28,7 +28,7 @@ export default function ActivityPage() {
       case 'ITEM_CREATED':
         return {
           icon: PlusCircle,
-          color: 'text-indigo-600 bg-indigo-50 border-indigo-200 shadow-indigo-100',
+          color: 'text-slate-800 bg-slate-100 border-slate-200 shadow-2xs',
           label: t('activity.actions.created'),
         };
       case 'ITEM_COMPLETED':
@@ -41,7 +41,7 @@ export default function ActivityPage() {
       case 'ITEM_RECURRENCE_SCHEDULED':
         return {
           icon: RefreshCw,
-          color: 'text-purple-600 bg-purple-50 border-purple-200 shadow-purple-100',
+          color: 'text-blue-700 bg-blue-50 border-blue-200 shadow-2xs',
           label: t('activity.actions.recurrenceSpawned'),
         };
       case 'ITEM_UPDATED':
@@ -76,8 +76,8 @@ export default function ActivityPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200/60">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
-            <span className="w-2 h-2 rounded-full bg-indigo-500" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            <span className="w-2 h-2 rounded-full bg-slate-400" />
             <span>{activities.length} {t('activity.title')}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
@@ -92,7 +92,7 @@ export default function ActivityPage() {
       <div className="glass-card rounded-3xl p-6 sm:p-8">
         {isLoading ? (
           <div className="py-16 text-center text-xs text-slate-400">
-            <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <div className="w-6 h-6 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
             <span>{t('activity.loadingTimeline')}</span>
           </div>
         ) : activities.length === 0 ? (
@@ -118,7 +118,7 @@ export default function ActivityPage() {
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-xs font-bold text-slate-900">{meta.label}</span>
-                      <span className="text-xs font-semibold text-indigo-700 bg-indigo-50/70 border border-indigo-100 px-2 py-0.5 rounded-lg truncate max-w-sm">
+                      <span className="text-xs font-semibold text-slate-800 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-lg truncate max-w-sm">
                         "{act.itemTitle || t('activity.obligationFallback')}"
                       </span>
                     </div>

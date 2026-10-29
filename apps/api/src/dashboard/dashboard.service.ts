@@ -98,6 +98,7 @@ export class DashboardService {
       todayCount,
       upcomingCount,
       completedCount,
+      totalActiveCount: overdueCount + todayCount + upcomingCount,
       activeRemindersCount,
       monthlyExpenditure: Number(monthlyExpenditure.toFixed(2)),
       categoryBreakdown,

@@ -110,7 +110,7 @@ export function NotificationBell() {
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm text-slate-900">{t('notifications.title')}</span>
               {unreadCount > 0 && (
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100 font-mono">
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-800 rounded-full border border-slate-200 font-mono">
                   {unreadCount}
                 </span>
               )}
@@ -120,7 +120,7 @@ export function NotificationBell() {
               <button
                 type="button"
                 onClick={() => markAllMutation.mutate()}
-                className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1 cursor-pointer"
+                className="text-xs text-slate-900 hover:text-slate-700 font-semibold flex items-center gap-1 cursor-pointer"
               >
                 <CheckCheck className="w-3.5 h-3.5 shrink-0" /> {t('notifications.markAllRead')}
               </button>
@@ -128,8 +128,8 @@ export function NotificationBell() {
           </div>
 
           {permission === 'default' && (
-            <div className="mx-4 my-2.5 p-3 bg-indigo-50/80 border border-indigo-100 rounded-2xl flex items-center justify-between gap-3 text-xs">
-              <span className="text-indigo-900 font-semibold text-[11px] leading-tight">
+            <div className="mx-4 my-2.5 p-3 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-between gap-3 text-xs">
+              <span className="text-slate-900 font-semibold text-[11px] leading-tight">
                 {t('settings.pushPromptBanner')}
               </span>
               <Button
@@ -157,7 +157,7 @@ export function NotificationBell() {
                   key={n.id}
                   onClick={() => !n.isRead && markOneMutation.mutate(n.id)}
                   className={`p-3.5 hover:bg-slate-50 transition-colors cursor-pointer flex gap-3 text-start ${
-                    !n.isRead ? 'bg-indigo-50/40' : ''
+                    !n.isRead ? 'bg-slate-100/60' : ''
                   }`}
                 >
                   <div className="shrink-0 mt-0.5">
@@ -166,7 +166,7 @@ export function NotificationBell() {
                         <AlertTriangle className="w-3.5 h-3.5" />
                       </div>
                     ) : (
-                      <div className="p-1.5 rounded-lg bg-indigo-100 text-indigo-600">
+                      <div className="p-1.5 rounded-lg bg-slate-100 text-slate-700">
                         <Clock className="w-3.5 h-3.5" />
                       </div>
                     )}
@@ -186,7 +186,7 @@ export function NotificationBell() {
                     </p>
                   </div>
                   {!n.isRead && (
-                    <span className="w-2 h-2 rounded-full bg-indigo-600 self-center shrink-0" />
+                    <span className="w-2 h-2 rounded-full bg-blue-600 self-center shrink-0" />
                   )}
                 </div>
               ))

@@ -125,7 +125,7 @@ export function CommandPalette({
       <div className="relative w-full max-w-2xl bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[80vh]">
         {/* Search Input Bar */}
         <div className="flex items-center px-4 py-3.5 border-b border-slate-100 gap-3">
-          <Search className="w-5 h-5 text-indigo-600 shrink-0" />
+          <Search className="w-5 h-5 text-slate-500 shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -158,14 +158,14 @@ export function CommandPalette({
                 onClose();
                 onOpenCreate();
               }}
-              className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-indigo-50/80 to-violet-50/80 hover:from-indigo-100/80 hover:to-violet-100/80 border border-indigo-100 transition-all text-start group cursor-pointer"
+              className="w-full flex items-center justify-between p-3 rounded-2xl bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200 transition-all text-start group cursor-pointer"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-indigo-500/30">
+                <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-xs">
                   <Plus className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">
+                  <p className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                     {t('nav.addCommitment')}
                   </p>
                   <p className="text-[11px] text-slate-500">
@@ -173,7 +173,7 @@ export function CommandPalette({
                   </p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-indigo-500 group-hover:translate-x-1 transition-transform rtl:rotate-180" />
+              <ArrowRight className="w-4 h-4 text-slate-500 group-hover:translate-x-1 transition-transform rtl:rotate-180" />
             </button>
           </div>
 
@@ -185,7 +185,7 @@ export function CommandPalette({
               </p>
               {isLoading ? (
                 <div className="py-6 text-center text-xs text-slate-400">
-                  <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                  <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
                   <span>{t('items.loadingItems')}</span>
                 </div>
               ) : items.length === 0 ? (
@@ -214,7 +214,7 @@ export function CommandPalette({
                             ? 'bg-emerald-500'
                             : item.isOverdue
                             ? 'bg-rose-500'
-                            : 'bg-indigo-500'
+                            : 'bg-blue-600'
                         }`}
                       />
                       <div className="overflow-hidden">
@@ -257,7 +257,7 @@ export function CommandPalette({
                     className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-100 text-start transition-colors group cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
-                      <Icon className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+                      <Icon className="w-4 h-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
                       <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900">
                         {nav.label}
                       </span>
@@ -286,7 +286,7 @@ export function CommandPalette({
               {t('common.close')}
             </span>
           </div>
-          <span className="font-semibold text-indigo-600">{t('common.commandHud')}</span>
+          <span className="font-semibold text-slate-700">{t('common.commandHud')}</span>
         </div>
       </div>
     </div>

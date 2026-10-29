@@ -28,7 +28,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               'w-full px-3.5 py-2.5 rounded-xl border bg-white text-sm text-slate-900 placeholder:text-slate-400 transition-all duration-150 shadow-2xs focus:outline-none focus:ring-4 resize-y',
               error
                 ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-500/15'
-                : 'border-slate-200/90 hover:border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/15',
+                : 'border-slate-200/90 hover:border-slate-300 focus:border-slate-900 focus:ring-slate-900/10',
               className,
             ),
           )}

@@ -36,7 +36,7 @@ export function LanguageSwitcher({ className = '', variant = 'outline' }: Langua
       title={isArabic ? 'Switch to English' : 'التحويل إلى اللغة العربية'}
       aria-label="Toggle language"
     >
-      <Globe className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+      <Globe className="w-3.5 h-3.5 text-slate-600 shrink-0" />
       <span>{isArabic ? 'English' : 'العربية'}</span>
     </button>
   );

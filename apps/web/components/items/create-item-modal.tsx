@@ -274,7 +274,7 @@ export function CreateItemModal({
 
         {/* Dynamic Fields for Bills & Subscriptions */}
         {(selectedType === ItemType.BILL || selectedType === ItemType.SUBSCRIPTION) && (
-          <div className="p-4 bg-indigo-50/60 rounded-2xl border border-indigo-100 space-y-3 animate-in fade-in">
+          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-3 animate-in fade-in">
             <Input
               label={t('modals.amountLabel')}
               type="number"
@@ -317,14 +317,14 @@ export function CreateItemModal({
         {/* Reminders Checkboxes styled as toggle pills */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-1.5">
-            <Bell className="w-3.5 h-3.5 text-indigo-600" />
+            <Bell className="w-3.5 h-3.5 text-slate-700" />
             <span>{t('modals.reminderLabel')}</span>
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
             <label className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200/80 cursor-pointer transition-colors">
               <input
                 type="checkbox"
-                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer"
+                className="w-4 h-4 rounded text-slate-900 focus:ring-slate-900/10 accent-slate-900 cursor-pointer"
                 {...register('reminder1Day')}
               />
               <span className="font-medium text-slate-700">{t('dashboard.daysRemaining', { count: 1 })}</span>
@@ -332,7 +332,7 @@ export function CreateItemModal({
             <label className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200/80 cursor-pointer transition-colors">
               <input
                 type="checkbox"
-                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer"
+                className="w-4 h-4 rounded text-slate-900 focus:ring-slate-900/10 accent-slate-900 cursor-pointer"
                 {...register('reminder3Days')}
               />
               <span className="font-medium text-slate-700">{t('dashboard.daysRemaining_plural', { count: 3 })}</span>
@@ -340,7 +340,7 @@ export function CreateItemModal({
             <label className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200/80 cursor-pointer transition-colors">
               <input
                 type="checkbox"
-                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer"
+                className="w-4 h-4 rounded text-slate-900 focus:ring-slate-900/10 accent-slate-900 cursor-pointer"
                 {...register('reminder7Days')}
               />
               <span className="font-medium text-slate-700">{t('dashboard.daysRemaining_plural', { count: 7 })}</span>
@@ -348,7 +348,7 @@ export function CreateItemModal({
             <label className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200/80 cursor-pointer transition-colors">
               <input
                 type="checkbox"
-                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 accent-indigo-600 cursor-pointer"
+                className="w-4 h-4 rounded text-slate-900 focus:ring-slate-900/10 accent-slate-900 cursor-pointer"
                 {...register('reminder30Days')}
               />
               <span className="font-medium text-slate-700">{t('dashboard.daysRemaining_plural', { count: 30 })}</span>
@@ -387,9 +387,9 @@ export function CreateItemModal({
           />
 
           {selectedFile ? (
-            <div className="flex items-center justify-between p-3 bg-indigo-50/70 border border-indigo-200 rounded-2xl text-xs">
+            <div className="flex items-center justify-between p-3 bg-slate-100/80 border border-slate-200 rounded-2xl text-xs">
               <div className="flex items-center gap-2 overflow-hidden">
-                <Paperclip className="w-4 h-4 text-indigo-600 shrink-0" />
+                <Paperclip className="w-4 h-4 text-slate-700 shrink-0" />
                 <span className="truncate font-semibold text-slate-900">{selectedFile.name}</span>
                 <span className="text-slate-400 shrink-0 font-mono text-[10px]">
                   ({(selectedFile.size / 1024).toFixed(0)} KB)
@@ -411,9 +411,9 @@ export function CreateItemModal({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-slate-200 hover:border-indigo-400 bg-slate-50/60 hover:bg-indigo-50/30 rounded-2xl text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-all cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-slate-200 hover:border-slate-400 bg-slate-50/60 hover:bg-slate-100/60 rounded-2xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all cursor-pointer"
             >
-              <UploadCloud className="w-4 h-4 text-indigo-500" />
+              <UploadCloud className="w-4 h-4 text-slate-700" />
               <span>{t('modals.uploadZonePrompt')}</span>
             </button>
           )}

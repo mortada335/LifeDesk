@@ -45,7 +45,7 @@ export default function RegisterPage() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <a href="/" className="inline-flex items-center gap-2 mb-4">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-indigo-200">
+          <div className="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-bold text-xl shadow-xs border border-slate-800">
             L
           </div>
           <span className="font-extrabold text-2xl tracking-tight text-slate-900">LifeDesk</span>
@@ -105,7 +105,7 @@ export default function RegisterPage() {
           <div className="mt-6 pt-5 border-t border-slate-100 text-center">
             <p className="text-xs text-slate-500">
               {t('auth.alreadyHaveAccount')}{' '}
-              <a href="/login" className="font-semibold text-indigo-600 hover:text-indigo-700">
+              <a href="/login" className="font-semibold text-slate-900 hover:text-slate-700 underline underline-offset-4">
                 {t('auth.signInLink')}
               </a>
             </p>

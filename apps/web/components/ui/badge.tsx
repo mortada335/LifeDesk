@@ -114,9 +114,9 @@ export function TypeBadge({ type }: { type: ItemType | string }) {
       icon: CreditCard,
     },
     [ItemType.SUBSCRIPTION]: {
-      bg: 'bg-purple-50/70',
-      text: 'text-purple-700',
-      border: 'border-purple-200/70',
+      bg: 'bg-blue-50/80',
+      text: 'text-blue-700',
+      border: 'border-blue-200/80',
       icon: RefreshCw,
     },
     [ItemType.DOCUMENT]: {
@@ -126,9 +126,9 @@ export function TypeBadge({ type }: { type: ItemType | string }) {
       icon: FileText,
     },
     [ItemType.APPOINTMENT]: {
-      bg: 'bg-sky-50/70',
-      text: 'text-sky-700',
-      border: 'border-sky-200/70',
+      bg: 'bg-teal-50/80',
+      text: 'text-teal-700',
+      border: 'border-teal-200/80',
       icon: Calendar,
     },
     [ItemType.TASK]: {

@@ -58,7 +58,7 @@ export function Modal({
           className={`relative w-full ${widthClasses[maxWidth]} bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden transform transition-all animate-in fade-in zoom-in-95 duration-200`}
         >
           {/* Header */}
-          <div className="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <div className="px-6 py-2 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <div>
               <h3 className="text-base font-bold text-slate-900 tracking-tight">{title}</h3>
               {description && <p className="text-xs text-slate-500 mt-0.5">{description}</p>}

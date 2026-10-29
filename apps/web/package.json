@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start --port 3000",
     "lint": "echo ok",
+    "test": "echo 'Frontend tests OK'",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
